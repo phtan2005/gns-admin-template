@@ -49,7 +49,22 @@
       }
     };
     const write = (key, value) => storage.setItem(key, JSON.stringify(value));
-    const getGroups = () => readArray(KEYS.groups, isGroup);
+    const normalizeCustomerIds = (customerIds, customers = getCustomers()) => {
+      const validIds = new Set(customers.map((customer) => customer.id));
+      return Array.isArray(customerIds)
+        ? [...new Set(customerIds.filter((id) => isNonEmptyString(id) && validIds.has(id)))]
+        : [];
+    };
+    const getGroups = () => {
+      const groups = readArray(KEYS.groups, isGroup);
+      const customers = getCustomers();
+      const sanitized = groups.map((group) => ({
+        ...group,
+        customerIds: normalizeCustomerIds(group.customerIds, customers)
+      }));
+      if (JSON.stringify(groups) !== JSON.stringify(sanitized)) write(KEYS.groups, sanitized);
+      return sanitized;
+    };
     const getGroup = (id) => getGroups().find((group) => group.id === id) || null;
     const getCustomers = () => {
       if (storage.getItem(KEYS.customers) === null) write(KEYS.customers, DEFAULT_CUSTOMERS);
@@ -63,9 +78,7 @@
         && group.name.trim().toLocaleLowerCase('vi') === name.toLocaleLowerCase('vi'))) {
         throw new Error('Tên nhóm đã tồn tại.');
       }
-      const customerIds = Array.isArray(input.customerIds)
-        ? [...new Set(input.customerIds.filter(isNonEmptyString))]
-        : [];
+      const customerIds = normalizeCustomerIds(input.customerIds);
       return {
         name,
         description: String(input.description || '').trim(),

@@ -70,7 +70,9 @@
 
     document.getElementById('groups-table-body').innerHTML = visible.map(groupRow).join('');
     document.getElementById('groups-empty').classList.toggle('d-none', groups.length !== 0);
-    document.getElementById('groups-pagination').innerHTML = renderPagination(pages);
+    const pagination = document.getElementById('groups-pagination');
+    pagination.classList.toggle('d-none', groups.length === 0);
+    pagination.innerHTML = renderPagination(pages);
   }
 
   document.getElementById('group-search').addEventListener('input', (event) => {

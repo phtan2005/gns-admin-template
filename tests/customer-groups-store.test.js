@@ -33,7 +33,7 @@ test('creates and reloads a normalized group', () => {
   const { store } = setup();
   const created = store.createGroup({
     name: '  Khách hàng VIP  ', description: ' Ưu tiên ', status: 'active',
-    customerIds: ['customer-1', 'customer-1', 'customer-2']
+    customerIds: ['customer-1', 'customer-1', 'customer-2', 'customer-999']
   });
   assert.deepEqual(created, {
     id: 'group-test', name: 'Khách hàng VIP', description: 'Ưu tiên', status: 'active',
@@ -89,6 +89,35 @@ test('a customer can belong to multiple groups and removal affects one group onl
   assert.ok(store.getCustomers().some(({ id }) => id === 'customer-1'));
 });
 
+test('sanitizes persisted group customer IDs by deduping and dropping unknown customers', () => {
+  const validGroup = {
+    id: 'group-dirty',
+    name: 'Nhóm bẩn',
+    description: '',
+    status: 'active',
+    customerIds: ['customer-1', 'customer-1', 'customer-999'],
+    createdAt: '2026-07-15T07:00:00.000Z',
+    updatedAt: '2026-07-15T08:00:00.000Z'
+  };
+  const { storage, store } = setup({
+    [KEYS.groups]: JSON.stringify([validGroup])
+  });
+
+  assert.deepEqual(store.getGroups()[0].customerIds, ['customer-1']);
+  assert.deepEqual(JSON.parse(storage.getItem(KEYS.groups))[0].customerIds, ['customer-1']);
+  const created = store.createGroup({
+    name: 'Nhóm mới',
+    status: 'active',
+    customerIds: ['customer-2', 'customer-2', 'customer-missing']
+  });
+  assert.deepEqual(created.customerIds, ['customer-2']);
+  const updated = store.updateGroup('group-dirty', {
+    name: 'Nhóm sạch',
+    status: 'inactive',
+    customerIds: ['customer-1', 'customer-404', 'customer-1']
+  });
+  assert.deepEqual(updated.customerIds, ['customer-1']);
+});
 test('reports missing groups and recovers from corrupt arrays', () => {
   const { store } = setup({
     [KEYS.groups]: '{bad json',
