@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi" data-layout="vertical" data-sidebar="dark" data-sidebar-size="lg" data-preloader="disable" data-theme="default" data-topbar="light" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <title>Chi tiết nhóm khách hàng | GNS Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chi tiết nhóm khách hàng">
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.min.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
+  <link href="assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="layout-wrapper">
+    <aside class="app-menu navbar-menu">
+      <div class="navbar-brand-box">
+        <a href="index.html" class="logo logo-dark"><span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="GNS" height="22"></span></a>
+        <a href="index.html" class="logo logo-light"><span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span><span class="logo-lg"><img src="assets/images/logo-light.png" alt="GNS" height="22"></span></a>
+      </div>
+      <div id="scrollbar"><div class="container-fluid"><ul class="navbar-nav" id="navbar-nav"><li class="menu-title"><span>Menu</span></li><li class="nav-item"><a class="nav-link menu-link" href="index.html"><i class="ph-house"></i><span>Tổng quan</span></a></li></ul></div></div>
+    </aside>
+    <header id="page-topbar"><div class="layout-width"><div class="navbar-header"><div class="d-flex"><div class="navbar-brand-box horizontal-logo"><a href="index.html" class="logo logo-dark"><span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span><span class="logo-lg"><img src="assets/images/logo-dark.png" alt="GNS" height="22"></span></a></div><button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger shadow-none" id="topnav-hamburger-icon" aria-label="Mở trình đơn"><span class="hamburger-icon"><span></span><span></span><span></span></span></button></div><div class="d-flex align-items-center"><span class="text-muted d-none d-sm-inline">Quản trị khách hàng</span></div></div></div></header>
+    <div class="main-content"><div class="page-content"><div class="container-fluid">
+      <div class="d-flex flex-wrap justify-content-between gap-2 mb-4"><div><h4 id="group-title" class="mb-1">Chi tiết nhóm khách hàng</h4><p id="group-description-text" class="text-muted mb-0"></p></div><div class="d-flex gap-2"><a href="customer-groups.html" class="btn btn-light">Quay lại danh sách</a><a id="edit-group-link" class="btn btn-primary" href="#">Chỉnh sửa nhóm</a></div></div>
+      <div class="row"><div class="col-md-6"><div class="card"><div class="card-body"><span class="text-muted">Trạng thái</span><div><span id="group-status-badge" class="badge"></span></div></div></div></div><div class="col-md-6"><div class="card"><div class="card-body"><span class="text-muted">Thành viên</span><h3 id="member-count" class="mb-0">0</h3></div></div></div></div>
+      <div class="card"><div class="card-header"><label class="visually-hidden" for="member-search">Tìm thành viên</label><input id="member-search" class="form-control" type="search" placeholder="Tìm thành viên theo tên, email hoặc số điện thoại..."></div><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Khách hàng</th><th>Số điện thoại</th><th>Trạng thái</th><th class="text-end">Thao tác</th></tr></thead><tbody id="members-table-body"></tbody></table></div><div id="members-empty" class="customer-groups-empty d-none">Nhóm chưa có khách hàng phù hợp.</div></div></div>
+    </div></div></div>
+  </div>
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/libs/sweetalert2/sweetalert2.min.js"></script>
+  <script src="assets/js/pages/customer-groups-store.js"></script>
+  <script src="assets/js/pages/customer-group-details.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

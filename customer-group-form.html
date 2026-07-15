@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi" data-layout="vertical" data-sidebar="dark" data-sidebar-size="lg" data-preloader="disable" data-theme="default" data-topbar="light" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <title>Tạo nhóm khách hàng | GNS Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tạo hoặc chỉnh sửa nhóm khách hàng">
+  <link rel="shortcut icon" href="assets/images/favicon.ico">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.min.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
+  <link href="assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id="layout-wrapper">
+    <aside class="app-menu navbar-menu">
+      <div class="navbar-brand-box">
+        <a href="index.html" class="logo logo-dark">
+          <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span>
+          <span class="logo-lg"><img src="assets/images/logo-dark.png" alt="GNS" height="22"></span>
+        </a>
+        <a href="index.html" class="logo logo-light">
+          <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span>
+          <span class="logo-lg"><img src="assets/images/logo-light.png" alt="GNS" height="22"></span>
+        </a>
+      </div>
+      <div id="scrollbar">
+        <div class="container-fluid">
+          <ul class="navbar-nav" id="navbar-nav">
+            <li class="menu-title"><span>Menu</span></li>
+            <li class="nav-item">
+              <a class="nav-link menu-link" href="index.html"><i class="ph-house"></i><span>Tổng quan</span></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <header id="page-topbar">
+      <div class="layout-width">
+        <div class="navbar-header">
+          <div class="d-flex">
+            <div class="navbar-brand-box horizontal-logo">
+              <a href="index.html" class="logo logo-dark">
+                <span class="logo-sm"><img src="assets/images/logo-sm.png" alt="GNS" height="22"></span>
+                <span class="logo-lg"><img src="assets/images/logo-dark.png" alt="GNS" height="22"></span>
+              </a>
+            </div>
+            <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger shadow-none" id="topnav-hamburger-icon" aria-label="Mở trình đơn">
+              <span class="hamburger-icon"><span></span><span></span><span></span></span>
+            </button>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="text-muted d-none d-sm-inline">Quản trị khách hàng</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="page-content">
+        <div class="container-fluid">
+          <div class="mb-4">
+            <h4 class="mb-1">Nhóm khách hàng</h4>
+            <p class="text-muted mb-0">Thiết lập thông tin nhóm và chọn khách hàng thành viên.</p>
+          </div>
+
+          <form id="customer-group-form" novalidate>
+            <div class="card">
+              <div class="card-header"><h5 id="form-title" class="mb-0">Tạo nhóm khách hàng</h5></div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-8">
+                    <label for="group-name" class="form-label">Tên nhóm <span class="text-danger">*</span></label>
+                    <input id="group-name" class="form-control" maxlength="100" required>
+                    <div class="invalid-feedback">Vui lòng nhập tên nhóm.</div>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="group-status" class="form-label">Trạng thái</label>
+                    <select id="group-status" class="form-select">
+                      <option value="active">Đang hoạt động</option>
+                      <option value="inactive">Ngừng hoạt động</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="group-description" class="form-label">Mô tả</label>
+                    <textarea id="group-description" class="form-control" rows="3" maxlength="500"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between gap-2">
+                <h5 class="mb-0">Chọn khách hàng</h5>
+                <span id="selected-count" class="badge bg-primary-subtle text-primary">0 đã chọn</span>
+              </div>
+              <div class="card-body">
+                <label for="customer-search" class="visually-hidden">Tìm khách hàng</label>
+                <input id="customer-search" class="form-control mb-3" type="search" placeholder="Tìm theo tên, email hoặc số điện thoại...">
+                <div id="customer-picker-list" class="customer-picker list-group list-group-flush"></div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <a href="customer-groups.html" class="btn btn-light">Huỷ</a>
+              <button id="save-group-button" class="btn btn-primary" type="submit">Lưu nhóm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/libs/sweetalert2/sweetalert2.min.js"></script>
+  <script src="assets/js/pages/customer-groups-store.js"></script>
+  <script src="assets/js/pages/customer-group-form.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
