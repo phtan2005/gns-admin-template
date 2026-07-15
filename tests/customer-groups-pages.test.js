@@ -6,6 +6,26 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
+test('customer group pages reference existing local resources', () => {
+  for (const page of [
+    'customer-groups.html',
+    'customer-group-form.html',
+    'customer-group-details.html'
+  ]) {
+    const source = read(page);
+
+    for (const match of source.matchAll(/(?:src|href)=["']([^"'#?]+)["']/g)) {
+      const reference = match[1];
+      if (/^(?:https?:|mailto:|tel:|javascript:)/.test(reference)) continue;
+
+      assert.ok(
+        fs.existsSync(path.join(root, reference)),
+        `${page} references missing local resource: ${reference}`
+      );
+    }
+  }
+});
+
 test('shared app script defines the customer group menu', () => {
   const source = read('assets/js/app.js');
   assert.match(source, /customer-groups-menu-item/);
