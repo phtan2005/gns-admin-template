@@ -11,3 +11,34 @@ test('shared app script defines the customer group menu', () => {
   assert.match(source, /customer-groups-menu-item/);
   assert.match(source, /customer-groups\.html/);
 });
+
+test('customer-groups.html exposes the list page contract', () => {
+  const source = read('customer-groups.html');
+
+  for (const asset of [
+    'assets/css/bootstrap.min.css',
+    'assets/css/icons.min.css',
+    'assets/css/app.min.css',
+    'assets/css/custom.css'
+  ]) assert.match(source, new RegExp(asset.replaceAll('.', '\\.')));
+
+  for (const id of [
+    'navbar-nav',
+    'topnav-hamburger-icon',
+    'group-search',
+    'status-filter',
+    'groups-table-body',
+    'groups-empty',
+    'groups-pagination'
+  ]) assert.match(source, new RegExp(`id=["']${id}["']`));
+
+  assert.match(source, /class=["'][^"']*main-content[^"']*["']/);
+  assert.match(source, /class=["'][^"']*page-content[^"']*["']/);
+  assert.match(source, /href=["']customer-group-form\.html["']/);
+
+  const bootstrap = source.indexOf('assets/libs/bootstrap/js/bootstrap.bundle.min.js');
+  const store = source.indexOf('assets/js/pages/customer-groups-store.js');
+  const list = source.indexOf('assets/js/pages/customer-groups-list.js');
+  const app = source.indexOf('assets/js/app.js');
+  assert.ok(bootstrap >= 0 && bootstrap < store && store < list && list < app);
+});
