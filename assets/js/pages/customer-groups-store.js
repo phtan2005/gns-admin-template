@@ -6,16 +6,9 @@
   'use strict';
 
   const KEYS = { customers: 'gns_customers_v1', groups: 'gns_customer_groups_v1' };
-  const DEFAULT_CUSTOMERS = [
-    { id: 'customer-1', name: 'Nguyễn Văn An', email: 'an.nguyen@example.com', phone: '0901 234 567', status: 'active', avatar: 'assets/images/users/32/avatar-2.jpg' },
-    { id: 'customer-2', name: 'Trần Thị Bình', email: 'binh.tran@example.com', phone: '0902 345 678', status: 'active', avatar: 'assets/images/users/32/avatar-3.jpg' },
-    { id: 'customer-3', name: 'Lê Minh Châu', email: 'chau.le@example.com', phone: '0903 456 789', status: 'inactive', avatar: 'assets/images/users/32/avatar-4.jpg' },
-    { id: 'customer-4', name: 'Phạm Quốc Dũng', email: 'dung.pham@example.com', phone: '0904 567 890', status: 'active', avatar: 'assets/images/users/32/avatar-5.jpg' },
-    { id: 'customer-5', name: 'Hoàng Thu Hà', email: 'ha.hoang@example.com', phone: '0905 678 901', status: 'active', avatar: 'assets/images/users/32/avatar-6.jpg' },
-    { id: 'customer-6', name: 'Vũ Gia Huy', email: 'huy.vu@example.com', phone: '0906 789 012', status: 'inactive', avatar: 'assets/images/users/32/avatar-7.jpg' },
-    { id: 'customer-7', name: 'Đỗ Ngọc Lan', email: 'lan.do@example.com', phone: '0907 890 123', status: 'active', avatar: 'assets/images/users/32/avatar-8.jpg' },
-    { id: 'customer-8', name: 'Bùi Đức Long', email: 'long.bui@example.com', phone: '0908 901 234', status: 'active', avatar: 'assets/images/users/32/avatar-9.jpg' }
-  ];
+  const SEED_MIGRATION_KEY = 'gns_customers_seed_removed_v3';
+  const DEFAULT_AVATAR = 'assets/images/users/32/user-dummy-img.jpg';
+  const LEGACY_CUSTOMER_IDS = new Set(Array.from({ length: 8 }, (_, index) => `customer-${index + 1}`));
 
   const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
   const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
@@ -49,6 +42,39 @@
       }
     };
     const write = (key, value) => storage.setItem(key, JSON.stringify(value));
+    const readStoredArray = (key) => {
+      try {
+        const value = JSON.parse(storage.getItem(key));
+        return Array.isArray(value) ? value : null;
+      } catch (_) {
+        return null;
+      }
+    };
+    const migrateLegacyCustomers = () => {
+      if (storage.getItem(SEED_MIGRATION_KEY) === '1') return;
+
+      const customers = readStoredArray(KEYS.customers);
+      if (customers) {
+        const cleanedCustomers = customers.filter((customer) => !isObject(customer)
+          || !LEGACY_CUSTOMER_IDS.has(customer.id));
+        if (cleanedCustomers.length !== customers.length) write(KEYS.customers, cleanedCustomers);
+      }
+
+      const groups = readStoredArray(KEYS.groups);
+      if (groups) {
+        let changed = false;
+        const cleanedGroups = groups.map((group) => {
+          if (!isObject(group) || !Array.isArray(group.customerIds)) return group;
+          const customerIds = group.customerIds.filter((id) => !LEGACY_CUSTOMER_IDS.has(id));
+          if (customerIds.length === group.customerIds.length) return group;
+          changed = true;
+          return { ...group, customerIds };
+        });
+        if (changed) write(KEYS.groups, cleanedGroups);
+      }
+
+      storage.setItem(SEED_MIGRATION_KEY, '1');
+    };
     const normalizeCustomerIds = (customerIds, customers = getCustomers()) => {
       const validIds = new Set(customers.map((customer) => customer.id));
       return Array.isArray(customerIds)
@@ -66,9 +92,38 @@
       return sanitized;
     };
     const getGroup = (id) => getGroups().find((group) => group.id === id) || null;
-    const getCustomers = () => {
-      if (storage.getItem(KEYS.customers) === null) write(KEYS.customers, DEFAULT_CUSTOMERS);
-      return readArray(KEYS.customers, isCustomer);
+    const getCustomers = () => readArray(KEYS.customers, isCustomer);
+    const normalizePhone = (phone) => phone.replace(/[.\-\s()]/g, '');
+    const normalizeCustomer = (input = {}, customers = getCustomers()) => {
+      const name = String(input.name || '').trim();
+      const email = String(input.email || '').trim().toLowerCase();
+      const phone = String(input.phone || '').trim();
+      const phoneKey = normalizePhone(phone);
+      if (!name) throw new Error('Họ tên là bắt buộc.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Email không hợp lệ.');
+      if (!phoneKey) throw new Error('Số điện thoại là bắt buộc.');
+      if (!isStatus(input.status)) throw new Error('Trạng thái khách hàng không hợp lệ.');
+
+      if (customers.some((customer) => customer.email.trim().toLowerCase() === email)) {
+        throw new Error('Email đã tồn tại.');
+      }
+      if (customers.some((customer) => normalizePhone(customer.phone) === phoneKey)) {
+        throw new Error('Số điện thoại đã tồn tại.');
+      }
+      const avatar = String(input.avatar || '').trim() || DEFAULT_AVATAR;
+      return { name, email, phone, status: input.status, avatar };
+    };
+    const createCustomer = (input) => {
+      const customers = getCustomers();
+      const normalized = normalizeCustomer(input, customers);
+      const stamp = now();
+      const customer = { id: makeId(), ...normalized, createdAt: stamp, updatedAt: stamp };
+      try {
+        write(KEYS.customers, [...customers, customer]);
+      } catch (_) {
+        throw new Error('Không thể lưu khách hàng. Bộ nhớ trình duyệt có thể đã đầy.');
+      }
+      return customer;
     };
     const normalize = (input, ignoredId) => {
       const name = String(input.name || '').trim();
@@ -109,8 +164,9 @@
         customerIds: group.customerIds.filter((id) => id !== customerId)
       });
     };
-    return { getCustomers, getGroups, getGroup, createGroup, updateGroup, removeCustomer };
+    migrateLegacyCustomers();
+    return { getCustomers, getGroups, getGroup, createCustomer, createGroup, updateGroup, removeCustomer };
   }
 
-  return { KEYS, DEFAULT_CUSTOMERS, createStore };
+  return { KEYS, createStore };
 });

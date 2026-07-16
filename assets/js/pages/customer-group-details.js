@@ -92,8 +92,7 @@
   function loadGroup() {
     group = groupId ? store.getGroup(groupId) : null;
     if (!group) {
-      notify('error', 'Không tìm thấy nhóm', 'Nhóm khách hàng không tồn tại.')
-        .then(() => window.location.replace('customer-groups.html'));
+      notify('error', 'Không tìm thấy nhóm', 'Nhóm khách hàng không tồn tại.');
       return false;
     }
     renderGroup();

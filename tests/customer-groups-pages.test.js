@@ -98,6 +98,37 @@ test('customer-group-form.html exposes the create and edit form contract', () =>
   assert.ok(bootstrap >= 0 && bootstrap < store && store < form && form < app);
 });
 
+test('customer group form exposes add-customer modal contract', () => {
+  const html = read('customer-group-form.html');
+  for (const id of [
+    'add-customer-button',
+    'add-customer-modal',
+    'add-customer-form',
+    'new-customer-name',
+    'new-customer-email',
+    'new-customer-phone',
+    'new-customer-status',
+    'new-customer-avatar',
+    'new-customer-avatar-preview',
+    'save-new-customer'
+  ]) assert.match(html, new RegExp(`id=["']${id}["']`));
+
+  assert.match(html, /Tối đa 3 MB/);
+});
+
+test('editing a group persists a newly created customer as a member', () => {
+  const source = read('assets/js/pages/customer-group-form.js');
+  assert.match(source, /persistCustomerToEditedGroup\(customer\.id\)/);
+});
+test('customer group controllers keep the current view without automatic redirects', () => {
+  for (const script of [
+    'assets/js/pages/customer-group-form.js',
+    'assets/js/pages/customer-group-details.js'
+  ]) {
+    assert.doesNotMatch(read(script), /window\.location\.replace/);
+  }
+});
+
 test('customer-group-details.html exposes the detail and member management contract', () => {
   const source = read('customer-group-details.html');
 
