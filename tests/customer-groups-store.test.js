@@ -2,7 +2,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { createStore, KEYS } = require('../assets/js/pages/customer-groups-store.js');
 
-const MIGRATION_KEY = 'gns_customers_seed_removed_v2';
+const LEGACY_MIGRATION_KEY = 'gns_customers_seed_removed_v2';
+const MIGRATION_KEY = 'gns_customers_seed_removed_v3';
 
 function customer(overrides = {}) {
   return {
@@ -78,6 +79,22 @@ test('migration removes legacy customer ids once and preserves group metadata', 
   assert.deepEqual(store.getCustomers().map(({ id }) => id), ['real-1', 'customer-2']);
 });
 
+test('removes legacy samples when an older migration flag already exists', () => {
+  const storage = memoryStorage({
+    [LEGACY_MIGRATION_KEY]: '1',
+    [KEYS.customers]: JSON.stringify([
+      customer({ id: 'customer-1', name: 'Nguyễn Văn An', email: 'an.nguyen@example.com', phone: '0901 234 567' }),
+      customer()
+    ]),
+    [KEYS.groups]: JSON.stringify([{ id: 'group-1', name: 'A', description: '', status: 'active', customerIds: ['customer-1', 'real-1'], createdAt: '2026-07-16T00:00:00.000Z', updatedAt: '2026-07-16T00:00:00.000Z' }])
+  });
+
+  const store = createStore(storage);
+
+  assert.deepEqual(store.getCustomers().map(({ id }) => id), ['real-1']);
+  assert.deepEqual(store.getGroup('group-1').customerIds, ['real-1']);
+  assert.equal(storage.getItem(MIGRATION_KEY), '1');
+});
 test('creates and persists a normalized customer', () => {
   const storage = memoryStorage();
   const store = createStore(storage, {

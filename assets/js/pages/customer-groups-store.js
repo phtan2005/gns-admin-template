@@ -6,7 +6,7 @@
   'use strict';
 
   const KEYS = { customers: 'gns_customers_v1', groups: 'gns_customer_groups_v1' };
-  const SEED_MIGRATION_KEY = 'gns_customers_seed_removed_v2';
+  const SEED_MIGRATION_KEY = 'gns_customers_seed_removed_v3';
   const DEFAULT_AVATAR = 'assets/images/users/32/user-dummy-img.jpg';
   const LEGACY_CUSTOMER_IDS = new Set(Array.from({ length: 8 }, (_, index) => `customer-${index + 1}`));
 
