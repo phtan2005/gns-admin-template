@@ -37,3 +37,10 @@ File: Custom Css File
     margin: .25rem 0 !important;
   }
 }
+
+.customer-avatar-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  background: var(--bs-tertiary-bg);
+}

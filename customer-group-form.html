@@ -92,9 +92,14 @@
             </div>
 
             <div class="card">
-              <div class="card-header d-flex align-items-center justify-content-between gap-2">
+              <div class="card-header d-flex align-items-center justify-content-between gap-2 flex-wrap">
                 <h5 class="mb-0">Chọn khách hàng</h5>
-                <span id="selected-count" class="badge bg-primary-subtle text-primary">0 đã chọn</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span id="selected-count" class="badge bg-primary-subtle text-primary">0 đã chọn</span>
+                  <button id="add-customer-button" class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add-customer-modal">
+                    <i class="ph-plus me-1"></i> Thêm khách hàng
+                  </button>
+                </div>
               </div>
               <div class="card-body">
                 <label for="customer-search" class="visually-hidden">Tìm khách hàng</label>
@@ -108,6 +113,61 @@
               <button id="save-group-button" class="btn btn-primary" type="submit">Lưu nhóm</button>
             </div>
           </form>
+
+          <div id="add-customer-modal" class="modal fade" tabindex="-1" aria-labelledby="add-customer-modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+              <div class="modal-content">
+                <form id="add-customer-form" novalidate>
+                  <div class="modal-header">
+                    <h5 id="add-customer-modal-title" class="modal-title">Thêm khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div id="new-customer-error" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-3">
+                      <div class="col-md-8">
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <label for="new-customer-name" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                            <input id="new-customer-name" class="form-control" maxlength="100" required>
+                            <div class="invalid-feedback">Vui lòng nhập họ tên khách hàng.</div>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="new-customer-email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input id="new-customer-email" class="form-control" type="email" maxlength="150" required>
+                            <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                          </div>
+                          <div class="col-md-6">
+                            <label for="new-customer-phone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                            <input id="new-customer-phone" class="form-control" type="tel" maxlength="30" required>
+                            <div class="invalid-feedback">Vui lòng nhập số điện thoại.</div>
+                          </div>
+                          <div class="col-12">
+                            <label for="new-customer-status" class="form-label">Trạng thái</label>
+                            <select id="new-customer-status" class="form-select">
+                              <option value="active">Đang hoạt động</option>
+                              <option value="inactive">Ngừng hoạt động</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="new-customer-avatar" class="form-label d-block">Ảnh đại diện</label>
+                        <img id="new-customer-avatar-preview" class="customer-avatar-preview rounded-circle border mb-3" src="assets/images/users/32/user-dummy-img.jpg" alt="Xem trước ảnh đại diện">
+                        <input id="new-customer-avatar" class="form-control" type="file" accept="image/jpeg,image/png">
+                        <div class="form-text">Chấp nhận JPG hoặc PNG. Tối đa 3 MB.</div>
+                        <div class="invalid-feedback">Ảnh phải là JPG hoặc PNG và không vượt quá 3 MB.</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                    <button id="save-new-customer" type="submit" class="btn btn-primary">Thêm khách hàng</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
