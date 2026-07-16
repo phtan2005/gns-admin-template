@@ -116,6 +116,15 @@ test('customer group form exposes add-customer modal contract', () => {
   assert.match(html, /Tối đa 3 MB/);
 });
 
+test('customer group controllers keep the current view without automatic redirects', () => {
+  for (const script of [
+    'assets/js/pages/customer-group-form.js',
+    'assets/js/pages/customer-group-details.js'
+  ]) {
+    assert.doesNotMatch(read(script), /window\.location\.replace/);
+  }
+});
+
 test('customer-group-details.html exposes the detail and member management contract', () => {
   const source = read('customer-group-details.html');
 

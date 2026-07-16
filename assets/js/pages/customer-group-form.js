@@ -169,8 +169,7 @@
     const group = store.getGroup(groupId);
     if (!group) {
       saveButton.disabled = true;
-      notify('error', 'Không tìm thấy nhóm', 'Nhóm khách hàng không tồn tại.')
-        .then(() => window.location.replace('customer-groups.html'));
+      notify('error', 'Không tìm thấy nhóm', 'Nhóm khách hàng không tồn tại.');
       return false;
     }
 
@@ -290,7 +289,9 @@
       if (isEditMode) store.updateGroup(groupId, input);
       else store.createGroup(input);
       const title = isEditMode ? 'Đã cập nhật nhóm' : 'Đã tạo nhóm';
-      notify('success', title).then(() => window.location.replace('customer-groups.html'));
+      notify('success', title).then(() => {
+        saveButton.disabled = false;
+      });
     } catch (error) {
       saveButton.disabled = false;
       const message = error instanceof Error ? error.message : 'Đã xảy ra lỗi khi lưu nhóm.';
