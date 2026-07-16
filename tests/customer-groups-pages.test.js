@@ -116,6 +116,10 @@ test('customer group form exposes add-customer modal contract', () => {
   assert.match(html, /Tối đa 3 MB/);
 });
 
+test('editing a group persists a newly created customer as a member', () => {
+  const source = read('assets/js/pages/customer-group-form.js');
+  assert.match(source, /persistCustomerToEditedGroup\(customer\.id\)/);
+});
 test('customer group controllers keep the current view without automatic redirects', () => {
   for (const script of [
     'assets/js/pages/customer-group-form.js',

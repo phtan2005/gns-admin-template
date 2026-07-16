@@ -183,6 +183,15 @@
     return true;
   }
 
+  function persistCustomerToEditedGroup(customerId) {
+    if (!isEditMode) return;
+    const group = store.getGroup(groupId);
+    if (!group) throw new Error('Không tìm thấy nhóm khách hàng.');
+    store.updateGroup(groupId, {
+      ...group,
+      customerIds: [...new Set([...group.customerIds, customerId])]
+    });
+  }
   pickerList.addEventListener('change', (event) => {
     const checkbox = event.target.closest('input[data-customer-id]');
     if (!checkbox) return;
@@ -255,6 +264,7 @@
         status: newCustomerStatusInput.value,
         avatar
       });
+      persistCustomerToEditedGroup(customer.id);
       customers = store.getCustomers();
       selectedIds.add(customer.id);
       searchInput.value = '';
